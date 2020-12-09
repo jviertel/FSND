@@ -41,6 +41,8 @@ class Venue(db.Model):
     phone = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
+    artists = db.relationship('Artist', secondary='shows',
+        backref=db.backref('Venue', lazy=True))
 
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
@@ -59,6 +61,10 @@ class Artist(db.Model):
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
 # TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
+shows = db.Table('shows',
+    db.Column('venue_id', db.Integer, db.ForeignKey('Venue.id'), primary_key=True),
+    db.Column('product_id', db.Integer, db.ForeignKey('Artist.id'), primary_key=True)
+)
 
 #----------------------------------------------------------------------------#
 # Filters.
