@@ -455,11 +455,17 @@ def create_artist_submission():
     genres = ' '.join(genresList)
     facebook_link = request.form.get('facebook_link')
 
-    artist = Artist(name=name, city=city, state=state, phone=phone, genres=genres, image_link=image_link, facebook_link=facebook_link )
-    db.session.add(artist)
-    db.session.commit()
-  # on successful db insert, flash success
-    flash('Artist ' + request.form['name'] + ' was successfully listed!')
+    exists = db.session.query(db.session.query(Artist).filter_by(name=request.form['name']).exists()).scalar()
+
+    if exists == False:
+      artist = Artist(name=name, city=city, state=state, phone=phone, genres=genres, image_link=image_link, facebook_link=facebook_link )
+      db.session.add(artist)
+      db.session.commit()
+    # on successful db insert, flash success
+      flash('Artist ' + request.form['name'] + ' was successfully listed!')
+    else:
+      flash('Artist ' + request.form['name'] + ' already exists.')
+  
   # DONE: on unsuccessful db insert, flash an error instead.
   # e.g., flash('An error occurred. Artist ' + data.name + ' could not be listed.')
   except ValueError:
