@@ -243,12 +243,17 @@ def create_venue_submission():
     genresList = request.form.getlist('genres')
     genres = ' '.join(genresList)
     facebook_link = request.form.get('facebook_link')
-    
-    venue = Venue(name=name, city=city, state=state, address=address, phone=phone, image_link=image_link, genres=genres, facebook_link=facebook_link)
-    db.session.add(venue)
-    db.session.commit()
-    # on successful db insert, flash success
-    flash('Venue ' + request.form['name'] + ' was successfully listed!')
+
+    exists = db.session.query(db.session.query(Venue).filter_by(name=request.form['name']).exists()).scalar()
+
+    if exists == False:
+      venue = Venue(name=name, city=city, state=state, address=address, phone=phone, image_link=image_link, genres=genres, facebook_link=facebook_link)
+      db.session.add(venue)
+      db.session.commit()
+      # on successful db insert, flash success
+      flash('Venue ' + request.form['name'] + ' was successfully listed!')
+    else:
+      flash('Venue ' + request.form['name'] + ' already exists.')
   # DONE: on unsuccessful db insert, flash an error instead.
   # e.g., flash('An error occurred. Venue ' + data.name + ' could not be listed.')
   # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
