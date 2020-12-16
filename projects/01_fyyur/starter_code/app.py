@@ -257,11 +257,18 @@ def create_venue_submission():
     genresList = request.form.getlist('genres')
     genres = ' '.join(genresList)
     facebook_link = request.form.get('facebook_link')
+    website = request.form.get('website')
+    seeking = request.form.get('seeking_talent')
+    seeking_talent = True
+    if seeking == 'No':
+      seeking_talent = False
+      
+    seeking_description = request.form.get('seeking_description')
 
     exists = db.session.query(db.session.query(Venue).filter_by(name=request.form['name']).exists()).scalar()
 
     if exists == False:
-      venue = Venue(name=name, city=city, state=state, address=address, phone=phone, image_link=image_link, genres=genres, facebook_link=facebook_link)
+      venue = Venue(name=name, city=city, state=state, address=address, phone=phone, image_link=image_link, genres=genres, facebook_link=facebook_link, website=website, seeking_description=seeking_description, seeking_talent=seeking_talent)
       db.session.add(venue)
       db.session.commit()
       # on successful db insert, flash success
