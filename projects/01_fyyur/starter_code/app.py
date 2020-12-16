@@ -43,6 +43,9 @@ class Venue(db.Model):
     image_link = db.Column(db.String(500))
     genres = db.Column(db.String(120))
     facebook_link = db.Column(db.String(120))
+    seeking_talent = db.Column(db.Boolean)
+    seeking_description = db.Column(db.String(500))
+    website = db.Column(db.String(120))
     artists = db.relationship('Artist', secondary=lambda: Show.__table__,
         backref=db.backref('Venue', lazy=True))
 
@@ -59,6 +62,9 @@ class Artist(db.Model):
     genres = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
+    seeking_venue = db.Column(db.Boolean)
+    seeking_description = db.Column(db.String(500))
+    website = db.Column(db.String(120))
 
     # DONE: implement any missing fields, as a database migration using Flask-Migrate
 
@@ -124,7 +130,7 @@ def venues():
 
 @app.route('/venues/search', methods=['POST'])
 def search_venues():
-  # TODO: implement search on venues with partial string search. Ensure it is case-insensitive.
+  # DONE: implement search on venues with partial string search. Ensure it is case-insensitive.
   # seach for Hop should return "The Musical Hop".
   # search for "Music" should return "The Musical Hop" and "Park Square Live Music & Coffee"
   search = request.form.get('search_term', '')
