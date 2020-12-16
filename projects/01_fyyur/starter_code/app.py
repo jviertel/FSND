@@ -5,6 +5,7 @@
 import json
 import dateutil.parser
 import babel
+import datetime
 from flask import Flask, render_template, request, Response, flash, redirect, url_for
 from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
@@ -285,15 +286,23 @@ def search_artists():
   # TODO: implement search on artists with partial string search. Ensure it is case-insensitive.
   # seach for "A" should return "Guns N Petals", "Matt Quevado", and "The Wild Sax Band".
   # search for "band" should return "The Wild Sax Band".
-  response={
-    "count": 1,
-    "data": [{
-      "id": 4,
-      "name": "Guns N Petals",
-      "num_upcoming_shows": 0,
-    }]
+  search = request.form.get('search_term', '')
+  searchString = "%{}%".format(search)
+  now = datetime.now()
+  artistsMatching = Artist.query.filter(Artist.name.ilike(searchString))
+  response = {
+    'count': Artist.query.filter(Artist.name.ilike(searchString)).count(),
+    'data': []
   }
-  return render_template('pages/search_artists.html', results=response, search_term=request.form.get('search_term', ''))
+  for artist in artistsMatching:
+    artistDict = {
+      'id': artist.id,
+      'name': artist.name,
+      'num_upcoming_shows': Show.query.filter(Show.artist_id == artist.id, Show.start_time > now).count()
+    }
+    response['data'].append(artistDict)
+
+  return render_template('pages/search_artists.html', results=response, search_term=search)
 
 @app.route('/artists/<int:artist_id>')
 def show_artist(artist_id):
