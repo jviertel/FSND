@@ -479,11 +479,17 @@ def create_artist_submission():
     genresList = request.form.getlist('genres')
     genres = ' '.join(genresList)
     facebook_link = request.form.get('facebook_link')
+    website = request.form.get('website')
+    seeking = True
+    if request.form.get('seeking_venue') == 'No':
+      seeking = False
+    seeking_venue = seeking
+    seeking_description = request.form.get('seeking_description')
 
     exists = db.session.query(db.session.query(Artist).filter_by(name=request.form['name']).exists()).scalar()
 
     if exists == False:
-      artist = Artist(name=name, city=city, state=state, phone=phone, genres=genres, image_link=image_link, facebook_link=facebook_link )
+      artist = Artist(name=name, city=city, state=state, phone=phone, genres=genres, image_link=image_link, facebook_link=facebook_link, website=website, seeking_venue=seeking_venue, seeking_description=seeking_description)
       db.session.add(artist)
       db.session.commit()
     # on successful db insert, flash success

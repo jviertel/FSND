@@ -122,7 +122,7 @@ class VenueForm(Form):
     )
 
     seeking_talent = RadioField(
-        'seeking_talent', 
+        'seeking_talent', validators=[DataRequired()],
         choices = [('Yes', 'Yes'), ('No', 'No')]
     )
     
@@ -228,6 +228,21 @@ class ArtistForm(Form):
     facebook_link = StringField(
         # TODO implement enum restriction
         'facebook_link', validators=[URL()]
+    )
+
+    website = StringField(
+        'website', validators=[URL()]
+    )
+
+    seeking_venue = RadioField(
+        'seeking_venue', validators=[DataRequired()],
+        choices=[('Yes','Yes'),
+                 ('No', 'No')
+        ]
+    )
+
+    seeking_description = StringField(
+        'seeking_description'
     )
 
 # TODO IMPLEMENT NEW ARTIST FORM AND NEW SHOW FORM
