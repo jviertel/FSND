@@ -362,6 +362,44 @@ def edit_artist(artist_id):
 def edit_artist_submission(artist_id):
   # TODO: take values from the form submitted, and update existing
   # artist record with ID <artist_id> using the new attributes
+  artist = Artist.query.get(artist_id)
+  try:
+    name = request.form.get('name')
+    city = request.form.get('city')
+    state = request.form.get('state')
+    phone = request.form.get('phone')
+    image_link = request.form.get('image_link')
+    genresList = request.form.getlist('genres')
+    genres = ' '.join(genresList)
+    facebook_link = request.form.get('facebook_link')
+    website = request.form.get('website')
+    seeking = True
+    if request.form.get('seeking_venue') == 'No':
+      seeking = False
+    seeking_venue = seeking
+    seeking_description = request.form.get('seeking_description')
+
+    artist.name = name
+    artist.city = city
+    artist.state = state
+    artist.phone = phone
+    artist.image_link = image_link
+    artist.genres = genres
+    artist.facebook_link = facebook_link
+    artist.website = website
+    artist.seeking_venue = seeking_venue
+    artist.seeking_description = seeking_description
+
+    db.session.add(artist)
+    db.session.commit()
+    # on successful db update, flash success
+    flash('Artist ' + request.form['name'] + ' was successfully updated!')
+
+  except ValueError:
+    db.session.rollback()
+    flash('An error occured. Artist ' + request.form['name'] + ' could not be updated.')
+  finally: 
+    db.session.close()
 
   return redirect(url_for('show_artist', artist_id=artist_id))
 
@@ -376,6 +414,48 @@ def edit_venue(venue_id):
 def edit_venue_submission(venue_id):
   # TODO: take values from the form submitted, and update existing
   # venue record with ID <venue_id> using the new attributes
+  venue = Venue.query.get(venue_id)
+  try:
+    name = request.form.get('name')
+    city = request.form.get('city')
+    state = request.form.get('state')
+    address = request.form.get('address')
+    phone = request.form.get('phone')
+    image_link = request.form.get('image_link')
+    genresList = request.form.getlist('genres')
+    genres = ' '.join(genresList)
+    facebook_link = request.form.get('facebook_link')
+    website = request.form.get('website')
+    seeking = request.form.get('seeking_talent')
+    seeking_talent = True
+    if seeking == 'No':
+      seeking_talent = False
+      
+    seeking_description = request.form.get('seeking_description')
+
+    venue.name = name
+    venue.city = city
+    venue.state = state
+    venue.address = address
+    venue.phone = phone
+    venue.image_link = image_link
+    venue.genres = genres
+    venue.facebook_link = facebook_link
+    venue.website = website
+    venue.seeking_talent = seeking_talent
+    venue.seeking_description = seeking_description
+
+    db.session.add(venue)
+    db.session.commit()
+    # on successful db update, flash success
+    flash('Venue ' + request.form['name'] + ' was successfully updated!')
+  except ValueError: 
+    db.session.rollback()
+    flash('An error occured. Venue ' + request.form['name'] + ' could not be updated.')
+  finally:
+    db.session.close()
+
+
   return redirect(url_for('show_venue', venue_id=venue_id))
 
 #  Create Artist
