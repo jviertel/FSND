@@ -134,8 +134,8 @@ def search_venues():
   # seach for Hop should return "The Musical Hop".
   # search for "Music" should return "The Musical Hop" and "Park Square Live Music & Coffee"
   search = request.form.get('search_term', '')
-  searchString = "%{}%".format(search)
-  now = datetime.now()
+  searchString = "%{}%".format(search) #Cite: 12/19/20 https://stackoverflow.com/questions/4926757/sqlalchemy-query-where-a-column-contains-a-substring
+  now = datetime.now() #Cite: 12/19/20 https://www.programiz.com/python-programming/datetime/current-datetime 
   venuesMatching = Venue.query.filter(Venue.name.ilike(searchString))
   response = {
       'count': Venue.query.filter(Venue.name.ilike(searchString)).count(),
@@ -172,7 +172,7 @@ def show_venue(venue_id):
       'artist_id': show.artist_id,
       'artist_name': showArtist.name,
       'artist_image_link': showArtist.image_link,
-      'start_time': show.start_time.strftime("%m/%d/%Y, %H:%M")
+      'start_time': show.start_time.strftime("%m/%d/%Y, %H:%M") #Cite: https://www.codegrepper.com/code-examples/delphi/convert+datetime+to+string+python 12/19/20
     }
     #if upcoming show add to upcomingShows
     if show.start_time > now:
@@ -260,6 +260,7 @@ def delete_venue(venue_id):
   # TODO: Complete this endpoint for taking a venue_id, and using
   # SQLAlchemy ORM to delete a record. Handle cases where the session commit could fail.
 
+
   # BONUS CHALLENGE: Implement a button to delete a Venue on a Venue Page, have it so that
   # clicking that button delete it from the db then redirect the user to the homepage
   return None
@@ -278,7 +279,7 @@ def search_artists():
   # seach for "A" should return "Guns N Petals", "Matt Quevado", and "The Wild Sax Band".
   # search for "band" should return "The Wild Sax Band".
   search = request.form.get('search_term', '')
-  searchString = "%{}%".format(search)
+  searchString = "%{}%".format(search) #Cite: 12/19/20 https://stackoverflow.com/questions/4926757/sqlalchemy-query-where-a-column-contains-a-substring
   now = datetime.now()
   artistsMatching = Artist.query.filter(Artist.name.ilike(searchString))
   response = {
@@ -316,7 +317,7 @@ def show_artist(artist_id):
       'venue_id': show.venue_id,
       'venue_name': showVenue.name,
       'venue_image_link': showVenue.image_link,
-      'start_time': show.start_time.strftime("%m/%d/%Y, %H:%M")
+      'start_time': show.start_time.strftime("%m/%d/%Y, %H:%M") #Cite: https://www.codegrepper.com/code-examples/delphi/convert+datetime+to+string+python 12/19/20
     }
     #if upcoming show add to upcomingShows
     if show.start_time > now:
@@ -407,7 +408,7 @@ def edit_artist_submission(artist_id):
 def edit_venue(venue_id):
   # DONE: populate form with values from venue with ID <venue_id>
   venue = Venue.query.filter(Venue.id == venue_id).first()
-  form = VenueForm(obj=venue)
+  form = VenueForm(obj=venue) #Cite: https://knowledge.udacity.com/questions/250457
   return render_template('forms/edit_venue.html', form=form, venue=venue)
 
 @app.route('/venues/<int:venue_id>/edit', methods=['POST'])
@@ -525,7 +526,7 @@ def shows():
       'artist_id': show.artist_id,
       'artist_name': Artist.query.with_entities(Artist.name).filter_by(id = show.artist_id).first().name,
       'artist_image_link': Artist.query.filter_by(id = show.artist_id).first().image_link,
-      'start_time': show.start_time.strftime("%m/%d/%Y, %H:%M")
+      'start_time': show.start_time.strftime("%m/%d/%Y, %H:%M") #Cite: https://www.codegrepper.com/code-examples/delphi/convert+datetime+to+string+python 12/19/20
     }
     showsList.append(showDict)
 
