@@ -10,6 +10,7 @@ from flask import Flask, render_template, request, Response, flash, redirect, ur
 from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from sqlalchemy import exc
 import logging
 from logging import Formatter, FileHandler
 from flask_wtf import Form
@@ -565,6 +566,9 @@ def create_show_submission():
   # DONE: on unsuccessful db insert, flash an error instead.
   # e.g., flash('An error occurred. Show could not be listed.')
   # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
+  except exc.IntegrityError: #Cite: 12/19 https://stackoverflow.com/questions/24522290/cannot-catch-sqlalchemy-integrityerror
+    db.session.rollback()
+    flash('An error occurred. Artist/Venue already exists.')
   except ValueError:
     db.session.rollback()
     flash('An error occurred. Show could not be listed.')
