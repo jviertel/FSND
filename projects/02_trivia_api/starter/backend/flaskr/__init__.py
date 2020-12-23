@@ -28,7 +28,7 @@ def create_app(test_config=None):
     return response
 
   '''
-  @TODO: 
+  @DONE: 
   Create an endpoint to handle GET requests 
   for all available categories.
   '''
@@ -120,6 +120,13 @@ def create_app(test_config=None):
   Create error handlers for all expected errors 
   including 404 and 422. 
   '''
+  @app.errorhandler(404)
+  def resource_not_found(error):
+    return jsonify({
+      'error': 404,
+      'success': False, 
+      'message': 'resource was not found'
+    }), 404
   
   return app
 
