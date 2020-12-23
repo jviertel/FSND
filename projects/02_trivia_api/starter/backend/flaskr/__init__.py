@@ -62,6 +62,22 @@ def create_app(test_config=None):
   ten questions per page and pagination at the bottom of the screen for three pages.
   Clicking on the page numbers should update the questions. 
   '''
+  @app.route("/questions", methods=['GET'])
+  def get_questions():
+    pg = request.args.get('page', 1, type=int)
+
+    firstItem = 10 * (pg -1)
+    lastItem = firstItem + 10
+    questions = Question.query.all()
+    if len(questions) == 0:
+      abort(404)
+
+    return jsonify({
+      'questions': questions[firstItem:lastItem],
+      'num_questions': len(questions),
+      'success': True,
+
+    })
 
   '''
   @TODO: 
@@ -120,6 +136,14 @@ def create_app(test_config=None):
   Create error handlers for all expected errors 
   including 404 and 422. 
   '''
+  @app.errorhandler(400)
+  def bad_request(error):
+    return jsonify({
+      'error': 400,
+      'success': False,
+      'message': 'bad request'
+    }), 400
+
   @app.errorhandler(404)
   def resource_not_found(error):
     return jsonify({
@@ -127,6 +151,31 @@ def create_app(test_config=None):
       'success': False, 
       'message': 'resource was not found'
     }), 404
+
+  @app.errorhandler(405)
+  def method_not_allowed(error):
+    return jsonify({
+      'error': 405,
+      'success': False,
+      'message': 'method not allowed'
+    })
+
+  @app.errorhandler(422)
+  def unprocessable_entity(error):
+    return jsonify({
+      'error': 422,
+      'success': False,
+      'message': 'unprocessable entity'
+    }), 422
+
+  @app.errorhandler(500)
+  def internal_server_error(error):
+    return jsonify({
+      'error': 500,
+      'success': False,
+      'message': 'internal server error'
+    }), 500
+
   
   return app
 
