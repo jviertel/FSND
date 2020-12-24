@@ -27,6 +27,27 @@ def create_app(test_config=None):
     response.headers.add('Acess-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS')
     return response
 
+  def paginate(questions, request):
+    pg = request.args.get('page', 1, type=int)
+    if len(questions) == 0:
+      abort(404)
+
+    if pg > (len(questions)/10 + 1):
+      abort(404)
+    firstItem = 10 * (pg -1)
+    lastItem = firstItem + 10
+    questions = [q.format() for q in questions] #Cite: 12/23/20 https://classroom.udacity.com/nanodegrees/nd0044/parts/838df8a7-4694-4982-a9a5-a5ab20247776/modules/af3a044c-37df-4ceb-8b0a-01c45cad6511/lessons/123d0a0a-8137-4e21-881f-8d03fb371209/concepts/7529c53d-c671-4ec7-bd7b-81ea374f72e3
+    current_page = questions[firstItem:lastItem]
+
+    return current_page
+
+  def list_categories():
+    categories = Category.query.all()
+    categoriesDict = {}
+    for c in categories:
+      categoriesDict[c.id] = c.type
+    return categoriesDict
+
   '''
   @DONE: 
   Create an endpoint to handle GET requests 
@@ -39,29 +60,15 @@ def create_app(test_config=None):
     if len(categories) == 0:
       abort(404)   
 
-    categoriesDict = {}
-    for c in categories:
-      categoriesDict[c.id] = c.type
-
     return jsonify({
-      'categories': categoriesDict,
+      'categories': list_categories(),
       'num_categories': len(categories),
       'success': True
     })
 
-  def paginate(questions, request):
-    pg = request.args.get('page', 1, type=int)
-    if len(questions) == 0:
-      abort(404)
+ 
     
-    if pg > (len(questions)/10 + 1):
-      abort(404)
-    firstItem = 10 * (pg -1)
-    lastItem = firstItem + 10
-    questions = [q.format() for q in questions] #Cite: 12/23/20 https://classroom.udacity.com/nanodegrees/nd0044/parts/838df8a7-4694-4982-a9a5-a5ab20247776/modules/af3a044c-37df-4ceb-8b0a-01c45cad6511/lessons/123d0a0a-8137-4e21-881f-8d03fb371209/concepts/7529c53d-c671-4ec7-bd7b-81ea374f72e3
-    current_page = questions[firstItem:lastItem]
-
-    return current_page
+    
   '''
   @DONE: 
   Create an endpoint to handle GET requests for questions, 
@@ -80,22 +87,17 @@ def create_app(test_config=None):
     questionObjects = Question.query.all()
     current_page = paginate(questionObjects, request)
 
-    categories = Category.query.all()
-    categoriesDict = {}
-    for c in categories:
-      categoriesDict[c.id] = c.type
-
     return jsonify({
       'questions': current_page,
       'num_questions': len(questionObjects),
-      'categories': categoriesDict, 
+      'categories': list_categories(), 
       'current_category': None,
       'success': True,
 
     })
 
   '''
-  @TODO: 
+  @DONE: 
   Create an endpoint to DELETE question using a question ID. 
 
   TEST: When you click the trash icon next to a question, the question will be removed.
@@ -114,23 +116,18 @@ def create_app(test_config=None):
     except Exception:
       abort(422)
     
-    categories = Category.query.all()
-    categoriesDict = {}
-    for c in categories:
-      categoriesDict[c.id] = c.type
-    
     return jsonify({
       'deleted_question': question_id,
       'questions': current_page, 
       'num_questions': len(questions),
-      'categories': categoriesDict,
+      'categories': list_categories(),
       'current_category': None, 
       'success': True
     })
 
 
   '''
-  @TODO: 
+  @DONE: 
   Create an endpoint to POST a new question, 
   which will require the question and answer text, 
   category, and difficulty score.
@@ -139,6 +136,30 @@ def create_app(test_config=None):
   the form will clear and the question will appear at the end of the last page
   of the questions list in the "List" tab.  
   '''
+  @app.route('/questions', methods=['POST'])
+  def create_question():
+    body = request.get_json()
+    question_text = body.get('question', None)
+    answer_text = body.get('answer', None)
+    difficulty = body.get('difficulty', None)
+    category = body.get('category', None)
+    try: 
+      question = Question(question=question_text, answer=answer_text, difficulty=difficulty, category=category)
+      question.insert()
+
+      questions = Question.query.all()
+      current_page = paginate(questions, request)
+
+      return jsonify({
+        'created_question': question.id, 
+        'questions': current_page, 
+        'num_questions': len(questions),
+        'categories': list_categories(),
+        'current_category': None,
+        'success': True
+      })
+    except Exception: 
+      abort(422)
 
   '''
   @TODO: 
