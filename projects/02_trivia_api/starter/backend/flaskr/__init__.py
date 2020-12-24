@@ -49,7 +49,13 @@ def create_app(test_config=None):
       'success': True
     })
 
-  def paginate(questions, request, pg):
+  def paginate(questions, request):
+    pg = request.args.get('page', 1, type=int)
+    if len(questions) == 0:
+      abort(404)
+    
+    if pg > (len(questions)/10 + 1):
+      abort(404)
     firstItem = 10 * (pg -1)
     lastItem = firstItem + 10
     questions = [q.format() for q in questions] #Cite: 12/23/20 https://classroom.udacity.com/nanodegrees/nd0044/parts/838df8a7-4694-4982-a9a5-a5ab20247776/modules/af3a044c-37df-4ceb-8b0a-01c45cad6511/lessons/123d0a0a-8137-4e21-881f-8d03fb371209/concepts/7529c53d-c671-4ec7-bd7b-81ea374f72e3
@@ -70,16 +76,9 @@ def create_app(test_config=None):
   '''
   @app.route("/questions", methods=['GET'])
   def get_questions():
-    pg = request.args.get('page', 1, type=int)
-    questionObjects = Question.query.all()
-    current_page = paginate(questionObjects, request, pg)
-    if len(questionObjects) == 0:
-      abort(404)
     
-    if pg > (len(questionObjects)/10 + 1):
-      abort(404)
-
-    questions = [q.format() for q in questionObjects] #Cite: 12/23/20 https://classroom.udacity.com/nanodegrees/nd0044/parts/838df8a7-4694-4982-a9a5-a5ab20247776/modules/af3a044c-37df-4ceb-8b0a-01c45cad6511/lessons/123d0a0a-8137-4e21-881f-8d03fb371209/concepts/7529c53d-c671-4ec7-bd7b-81ea374f72e3
+    questionObjects = Question.query.all()
+    current_page = paginate(questionObjects, request)
 
     categories = Category.query.all()
     categoriesDict = {}
@@ -88,7 +87,7 @@ def create_app(test_config=None):
 
     return jsonify({
       'questions': current_page,
-      'num_questions': len(questions),
+      'num_questions': len(questionObjects),
       'categories': categoriesDict, 
       'current_category': None,
       'success': True,
