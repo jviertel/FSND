@@ -80,6 +80,25 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 404)
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'resource was not found')
+    
+    def test_create_question(self):
+        res = self.client().post('/questions', 
+            json={
+                'question': 'How many NBA championships have the Chicago Bulls won?',
+                'answer': '6',
+                'difficulty': 2, 
+                'category': 2
+            })
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertTrue(data['created_question'])
+        self.assertTrue(data['num_questions'])
+        self.assertTrue(len(data['questions']))
+        self.assertTrue(len(data['categories']))
+        self.assertEqual(data['current_category'], None)
+        self.assertEqual(data['success'], True)
 
 
 # Make the tests conveniently executable
