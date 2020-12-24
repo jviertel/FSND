@@ -109,11 +109,24 @@ def create_app(test_config=None):
     
     try:
       toDelete.delete()
-      Question.session.commit()
+      questions = Question.query.all()
+      current_page = paginate(questions, request)
     except Exception:
-      Question.session.rollback()
-    finally:
-      Question.session.close()
+      abort(422)
+    
+    categories = Category.query.all()
+    categoriesDict = {}
+    for c in categories:
+      categoriesDict[c.id] = c.type
+    
+    return jsonify({
+      'deleted_question': question_id,
+      'questions': current_page, 
+      'num_questions': len(questions),
+      'categories': categoriesDict,
+      'current_category': None, 
+      'success': True
+    })
 
 
   '''

@@ -61,6 +61,26 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'resource was not found')
 
+    def test_delete_question(self):
+        res = self.client().delete('/questions/21')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['deleted_question'], 21)
+        self.assertTrue(data['num_questions'])
+        self.assertTrue(len(data['questions']))
+        self.assertTrue(len(data['categories']))
+        self.assertEqual(data['current_category'], None)
+        self.assertEqual(data['success'], True)
+
+    def test_404_question_id_invalid(self):
+        res = self.client().delete('/questions/5000')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'resource was not found')
+
 
 # Make the tests conveniently executable
 if __name__ == "__main__":
