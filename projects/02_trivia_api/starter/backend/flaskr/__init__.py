@@ -49,7 +49,13 @@ def create_app(test_config=None):
       'success': True
     })
 
+  def paginate(questions, request, pg):
+    firstItem = 10 * (pg -1)
+    lastItem = firstItem + 10
+    questions = [q.format() for q in questions] #Cite: 12/23/20 https://classroom.udacity.com/nanodegrees/nd0044/parts/838df8a7-4694-4982-a9a5-a5ab20247776/modules/af3a044c-37df-4ceb-8b0a-01c45cad6511/lessons/123d0a0a-8137-4e21-881f-8d03fb371209/concepts/7529c53d-c671-4ec7-bd7b-81ea374f72e3
+    current_page = questions[firstItem:lastItem]
 
+    return current_page
   '''
   @DONE: 
   Create an endpoint to handle GET requests for questions, 
@@ -65,17 +71,15 @@ def create_app(test_config=None):
   @app.route("/questions", methods=['GET'])
   def get_questions():
     pg = request.args.get('page', 1, type=int)
-    firstItem = 10 * (pg -1)
-    lastItem = firstItem + 10
-
     questionObjects = Question.query.all()
+    current_page = paginate(questionObjects, request, pg)
     if len(questionObjects) == 0:
       abort(404)
     
     if pg > (len(questionObjects)/10 + 1):
       abort(404)
 
-    questions = [q.format() for q in questionObjects]
+    questions = [q.format() for q in questionObjects] #Cite: 12/23/20 https://classroom.udacity.com/nanodegrees/nd0044/parts/838df8a7-4694-4982-a9a5-a5ab20247776/modules/af3a044c-37df-4ceb-8b0a-01c45cad6511/lessons/123d0a0a-8137-4e21-881f-8d03fb371209/concepts/7529c53d-c671-4ec7-bd7b-81ea374f72e3
 
     categories = Category.query.all()
     categoriesDict = {}
@@ -83,7 +87,7 @@ def create_app(test_config=None):
       categoriesDict[c.id] = c.type
 
     return jsonify({
-      'questions': questions[firstItem:lastItem],
+      'questions': current_page,
       'num_questions': len(questions),
       'categories': categoriesDict, 
       'current_category': None,
@@ -98,7 +102,20 @@ def create_app(test_config=None):
   TEST: When you click the trash icon next to a question, the question will be removed.
   This removal will persist in the database and when you refresh the page. 
   '''
- 
+  @app.route("/questions/<int:question_id>", methods=['DELETE'])
+  def delete_question(question_id):
+    toDelete = Question.query.filter(Question.id == question_id).one_or_none()
+    if toDelete == None:
+      abort(404)
+    
+    try:
+      toDelete.delete()
+      Question.session.commit()
+    except Exception:
+      Question.session.rollback()
+    finally:
+      Question.session.close()
+
 
   '''
   @TODO: 
