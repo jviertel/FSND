@@ -47,7 +47,7 @@ class TriviaTestCase(unittest.TestCase):
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
-        self.assertTrue(data['num_questions'])
+        self.assertTrue(data['total_questions'])
         self.assertTrue(len(data['questions']))
         self.assertTrue(len(data['categories']))
         self.assertEqual(data['current_category'], None)
@@ -67,7 +67,7 @@ class TriviaTestCase(unittest.TestCase):
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['deleted_question'], 21)
-        self.assertTrue(data['num_questions'])
+        self.assertTrue(data['total_questions'])
         self.assertTrue(len(data['questions']))
         self.assertTrue(len(data['categories']))
         self.assertEqual(data['current_category'], None)
@@ -93,7 +93,7 @@ class TriviaTestCase(unittest.TestCase):
 
         self.assertEqual(res.status_code, 200)
         self.assertTrue(data['created_question'])
-        self.assertTrue(data['num_questions'])
+        self.assertTrue(data['total_questions'])
         self.assertTrue(len(data['questions']))
         self.assertTrue(len(data['categories']))
         self.assertEqual(data['current_category'], None)
@@ -105,7 +105,7 @@ class TriviaTestCase(unittest.TestCase):
         data = json.loads(res.data)
         
         self.assertEqual(res.status_code, 200)
-        self.assertTrue(data['num_questions'])
+        self.assertTrue(data['total_questions'])
         self.assertTrue(len(data['questions']))
         self.assertTrue(len(data['categories']))
         self.assertEqual(data['current_category'], None)
@@ -122,6 +122,15 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'resource was not found')
 
+    def get_qeustions_by_category(self):
+        res = self.client().get('/categories/4/questions')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertTrue(data['total_questions'])
+        self.assertTrue(len(data['questions']))
+        self.assertEqual(data['current_category'], 4)
+        self.assertEqual(data['success'], True)
 
 
 # Make the tests conveniently executable
