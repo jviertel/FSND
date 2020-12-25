@@ -89,11 +89,10 @@ def create_app(test_config=None):
 
     return jsonify({
       'questions': current_page,
-      'num_questions': len(questionObjects),
+      'total_questions': len(questionObjects),
       'categories': list_categories(), 
       'current_category': None,
       'success': True,
-
     })
 
   '''
@@ -119,7 +118,7 @@ def create_app(test_config=None):
     return jsonify({
       'deleted_question': question_id,
       'questions': current_page, 
-      'num_questions': len(questions),
+      'total_questions': len(questions),
       'categories': list_categories(),
       'current_category': None, 
       'success': True
@@ -153,7 +152,7 @@ def create_app(test_config=None):
           return jsonify({
             'created_question': question.id, 
             'questions': current_page, 
-            'num_questions': len(questions),
+            'total_questions': len(questions),   
             'categories': list_categories(),
             'current_category': None,
             'success': True
@@ -183,7 +182,7 @@ def create_app(test_config=None):
     current_page = paginate(questionObjects, request)
     return jsonify({
       'questions': current_page,
-      'num_questions': len(questionObjects),
+      'total_questions': len(questionObjects),
       'categories': list_categories(),
       'current_category': None,
       'success': True
@@ -197,6 +196,18 @@ def create_app(test_config=None):
   categories in the left column will cause only questions of that 
   category to be shown. 
   '''
+  @app.route('/categories/<int:category_id>/questions', methods=['GET'])
+  def get_questions_by_category(category_id):
+    questions = Question.query.filter(Question.category == category_id).all()
+
+    current_page = paginate(questions, request)
+
+    return jsonify({
+        'questions': current_page,
+        'total_questions': len(questions),
+        'current_category': category_id,
+        'success': True,
+      })
 
 
   '''
