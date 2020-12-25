@@ -137,32 +137,45 @@ def create_app(test_config=None):
   of the questions list in the "List" tab.  
   '''
   @app.route('/questions', methods=['POST'])
-  def create_question():
+  def create_or_search_question():
     body = request.get_json()
     question_text = body.get('question', None)
     answer_text = body.get('answer', None)
     difficulty = body.get('difficulty', None)
     category = body.get('category', None)
-    try: 
-      question = Question(question=question_text, answer=answer_text, difficulty=difficulty, category=category)
-      question.insert()
+    search_term = body.get('query', None)
+    try:
+      if search_term:
+        searchString = "%{}%".format(search_term) #Cite: 12/19/20 https://stackoverflow.com/questions/4926757/sqlalchemy-query-where-a-column-contains-a-substring
+        questionObjects = Question.query.filter(Question.question.ilike(searchString)).all()
+        current_page = paginate(questionObjects, request)
+        return jsonify({
+          'questions': current_page,
+          'num_questions': len(questionObjects),
+          'categories': list_categories(),
+          'current_category': None,
+          'success': True
+        })
+      else:
+          question = Question(question=question_text, answer=answer_text, difficulty=difficulty, category=category)
+          question.insert()
 
-      questions = Question.query.all()
-      current_page = paginate(questions, request)
+          questions = Question.query.all()
+          current_page = paginate(questions, request)
 
-      return jsonify({
-        'created_question': question.id, 
-        'questions': current_page, 
-        'num_questions': len(questions),
-        'categories': list_categories(),
-        'current_category': None,
-        'success': True
-      })
+          return jsonify({
+            'created_question': question.id, 
+            'questions': current_page, 
+            'num_questions': len(questions),
+            'categories': list_categories(),
+            'current_category': None,
+            'success': True
+          })
     except Exception: 
       abort(422)
 
   '''
-  @TODO: 
+  @DONE: 
   Create a POST endpoint to get questions based on a search term. 
   It should return any questions for whom the search term 
   is a substring of the question. 
