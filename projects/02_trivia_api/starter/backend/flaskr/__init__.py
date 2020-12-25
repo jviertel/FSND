@@ -189,7 +189,7 @@ def create_app(test_config=None):
     })
 
   '''
-  @TODO: 
+  @DONE: 
   Create a GET endpoint to get questions based on category. 
 
   TEST: In the "List" tab / main screen, clicking on one of the 
@@ -198,6 +198,11 @@ def create_app(test_config=None):
   '''
   @app.route('/categories/<int:category_id>/questions', methods=['GET'])
   def get_questions_by_category(category_id):
+    categories = list_categories()
+    if category_id not in categories:
+      abort(404)
+
+
     questions = Question.query.filter(Question.category == category_id).all()
 
     current_page = paginate(questions, request)
