@@ -32,7 +32,7 @@ def create_app(test_config=None):
     if len(questions) == 0:
       abort(404)
 
-    if pg > (len(questions)/10 + 1):
+    if pg > (len(questions)/10 + 1): 
       abort(404)
     firstItem = 10 * (pg -1)
     lastItem = firstItem + 10
@@ -137,26 +137,13 @@ def create_app(test_config=None):
   of the questions list in the "List" tab.  
   '''
   @app.route('/questions', methods=['POST'])
-  def create_or_search_question():
+  def create_question():
     body = request.get_json()
     question_text = body.get('question', None)
     answer_text = body.get('answer', None)
     difficulty = body.get('difficulty', None)
     category = body.get('category', None)
-    search_term = body.get('query', None)
     try:
-      if search_term:
-        searchString = "%{}%".format(search_term) #Cite: 12/19/20 https://stackoverflow.com/questions/4926757/sqlalchemy-query-where-a-column-contains-a-substring
-        questionObjects = Question.query.filter(Question.question.ilike(searchString)).all()
-        current_page = paginate(questionObjects, request)
-        return jsonify({
-          'questions': current_page,
-          'num_questions': len(questionObjects),
-          'categories': list_categories(),
-          'current_category': None,
-          'success': True
-        })
-      else:
           question = Question(question=question_text, answer=answer_text, difficulty=difficulty, category=category)
           question.insert()
 
@@ -184,6 +171,23 @@ def create_app(test_config=None):
   only question that include that string within their question. 
   Try using the word "title" to start. 
   '''
+  @app.route('/questions/search', methods=['POST'])
+  def search_question():
+    body = request.get_json()
+    search_term = body.get('searchTerm', None)
+
+    searchString = "%{}%".format(search_term) #Cite: 12/19/20 https://stackoverflow.com/questions/4926757/sqlalchemy-query-where-a-column-contains-a-substring
+    questionObjects = Question.query.filter(Question.question.ilike(searchString)).all()
+    if len(questionObjects) == 0:
+      abort(404)
+    current_page = paginate(questionObjects, request)
+    return jsonify({
+      'questions': current_page,
+      'num_questions': len(questionObjects),
+      'categories': list_categories(),
+      'current_category': None,
+      'success': True
+    })
 
   '''
   @TODO: 
