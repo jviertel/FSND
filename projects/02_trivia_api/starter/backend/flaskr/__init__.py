@@ -216,7 +216,7 @@ def create_app(test_config=None):
 
 
   '''
-  @TODO: 
+  @DONE: 
   Create a POST endpoint to get questions to play the quiz. 
   This endpoint should take category and previous question parameters 
   and return a random questions within the given category, 
@@ -226,6 +226,37 @@ def create_app(test_config=None):
   one question at a time is displayed, the user is allowed to answer
   and shown whether they were correct or not. 
   '''
+  @app.route("/quizzes", methods=['POST'])
+  def play_quiz():
+    body = request.get_json()
+    previous_questions = body.get('previous_questions', [])
+    category = body.get('quiz_category', None)
+
+    categories = list_categories()
+    quiz_questions = []
+    if category != None:
+      if category['id'] == 0:
+        questions = Question.query.all()
+      elif int(category['id']) > 0 and int(category['id']) < len(categories):
+        questions = Question.query.filter(Question.category == category['id'])
+      else:
+        abort(422)
+      for q in questions:
+        if q.id not in previous_questions:
+          quiz_questions.append(q.format())
+      
+      if len(quiz_questions) == 0:
+        return jsonify({
+          'question': False
+        })
+      else:
+        current_question = random.choice(quiz_questions) #Cite: 12/26/2020 https://knowledge.udacity.com/questions/234306
+        return jsonify({
+          'question': current_question
+        })
+        
+    else:
+      abort(400)
 
   '''
   @DONE: 
