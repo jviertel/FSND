@@ -247,12 +247,14 @@ def create_app(test_config=None):
       
       if len(quiz_questions) == 0:
         return jsonify({
-          'question': False
+          'question': False,
+          'success': False
         })
       else:
         current_question = random.choice(quiz_questions) #Cite: 12/26/2020 https://knowledge.udacity.com/questions/234306
         return jsonify({
-          'question': current_question
+          'question': current_question,
+          'success': True
         })
         
     else:
