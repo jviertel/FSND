@@ -66,29 +66,6 @@ One note before you delve into your tasks: for each endpoint you are expected to
 8. Create a POST endpoint to get questions to play the quiz. This endpoint should take category and previous question parameters and return a random questions within the given category, if provided, and that is not one of the previous questions. 
 9. Create error handlers for all expected errors including 400, 404, 422 and 500. 
 
-REVIEW_COMMENT
-```
-This README is missing documentation of your endpoints. Below is an example for your endpoint to get all categories. Please use it as a reference for creating your documentation and resubmit your code. 
-
-Endpoints
-GET '/categories'
-GET ...
-POST ...
-DELETE ...
-
-GET '/categories'
-- Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
-- Request Arguments: None
-- Returns: An object with a single key, categories, that contains a object of id: category_string key:value pairs. 
-{'1' : "Science",
-'2' : "Art",
-'3' : "Geography",
-'4' : "History",
-'5' : "Entertainment",
-'6' : "Sports"}
-
-```
-
 
 ## Testing
 To run the tests, run
@@ -98,3 +75,128 @@ createdb trivia_test
 psql trivia_test < trivia.psql
 python test_flaskr.py
 ```
+
+### Endpoints
+GET '/categories'
+GET '/questions'
+DELETE '/questions/<int:question_id>'
+POST '/questions'
+POST '/questions/search'
+GET '/categories/<int:category_id>/questions'
+POST '/quizzes' 
+
+GET '/categories'
+- Gets all available categories
+- Returns a JSON object with the categories, count of categories, and success value
+Ex. Return
+{
+  'categories': {
+      '1': "Science",
+      '2': "Art", 
+      '3': "Geography",
+      '4': "History",
+      '5': "Entertainment",
+      '6': "Sports"},
+    'mum_categories': 6,
+    'success': True
+}
+
+GET '/questions'
+- Gets all questions
+- Paginates questions
+- Returns a JSON object with all questions paginated, total number of questions, all categories, current category, and success value
+Ex. Return
+{
+  'questions': {
+    ...
+  },
+  'total_questions': 17,
+  'categories': {
+      '1': "Science",
+      '2': "Art", 
+      '3': "Geography",
+      '4': "History",
+      '5': "Entertainment",
+      '6': "Sports"}, 
+   'current_category': None,
+   'success': True
+}
+
+DELETE '/questions/<int:question_id>'
+- Deletes question with id question_id
+- Returns JSON object with deleted question id, paginated questions (with deleted question removed), total number of questions, all categories, current category, and success value
+Ex. Return
+{
+  'deleted_question': 18,
+  'questions': {
+    ...
+  },
+  'total_questions': 27,
+  'categories': {
+      '1': "Science",
+      '2': "Art", 
+      '3': "Geography",
+      '4': "History",
+      '5': "Entertainment",
+      '6': "Sports"},
+   'current_category': None,
+   'success': True
+}
+
+POST '/questions'
+- Takes JSON object with string question_text, string answer_text, integer difficulty, and integer category
+- Creates new question with from above JSON object
+- Returns JSON object with created question id, all questions paginated, total number of questions, all categories, current category, and success value
+Ex. Return
+{
+  'created_question': 28,
+  'questions': {
+    ...
+  },
+  'total_questions': 28, 
+  'categories': {
+      '1': "Science",
+      '2': "Art", 
+      '3': "Geography",
+      '4': "History",
+      '5': "Entertainment",
+      '6': "Sports"},
+   'current_category': None,
+   'success': True
+}
+
+POST '/questions/search'
+- Takes JSON object with string searchTerm
+- Searches all questions (case-insensitive) for search string
+- Returns JSON object with all questions that match the search term paginated, total number of questions matching search, all categories, current category, and success value
+Ex. Return
+{
+  'questions': {
+    ...
+  },
+  'total_questions': 28,
+  'categories': {
+      '1': "Science",
+      '2': "Art", 
+      '3': "Geography",
+      '4': "History",
+      '5': "Entertainment",
+      '6': "Sports"},
+   'current_category': None,
+   'success': True
+}
+
+GET '/categories/<int:category_id>/questions'
+- Gets all questions that are in the category with category_id
+- Returns JSON object with all questions in the category paginated, total number of questions in category, current category id, and success value
+Ex. Return
+{
+  'questions': {
+    ...
+  },
+  'total_questions': 4, 
+  'current_category': 4, 
+  'success': True
+}
+
+POST '/quizzes' 
