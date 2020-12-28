@@ -77,13 +77,13 @@ python test_flaskr.py
 ```
 
 ### Endpoints
-GET '/categories'
-GET '/questions'
-DELETE '/questions/<int:question_id>'
-POST '/questions'
-POST '/questions/search'
-GET '/categories/<int:category_id>/questions'
-POST '/quizzes' 
+- GET '/categories'
+- GET '/questions'
+- DELETE '/questions/<int:question_id>'
+- POST '/questions'
+- POST '/questions/search'
+- GET '/categories/<int:category_id>/questions'
+- POST '/quizzes' 
 
 GET '/categories'
 - Gets all available categories
