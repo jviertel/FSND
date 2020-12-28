@@ -237,7 +237,7 @@ def create_app(test_config=None):
     if category != None:
       if category['id'] == 0:
         questions = Question.query.all()
-      elif int(category['id']) > 0 and int(category['id']) < len(categories):
+      elif int(category['id']) > 0 and int(category['id']) < len(categories) + 1:
         questions = Question.query.filter(Question.category == category['id']).all()
       else:
         abort(422)
