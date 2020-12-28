@@ -199,4 +199,14 @@ Ex. Return
   'success': True
 }
 
-POST '/quizzes' 
+POST '/quizzes'
+- Takes JSON object with previous_questions and quiz category (deafults to None if no categoryP
+- Generates random question in category with that was not previously on quiz
+- Returns question and success value
+Ex. Return
+{
+  'question': {
+    ...
+  },
+  'success': True
+}
