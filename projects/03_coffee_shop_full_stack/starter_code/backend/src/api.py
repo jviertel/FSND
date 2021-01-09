@@ -74,7 +74,23 @@ def get_drinks_detail():
     returns status code 200 and json {"success": True, "drinks": drink} where drink an array containing only the newly created drink
         or appropriate status code indicating reason for failure
 '''
+@app.route('/drinks', methods=['POST'])
+@requires_auth('post:drinks')
+def create_drink():
+    body = request.get_json()
 
+    title = body.get('title', None)
+    recipe = body.get('recipe', None)
+    try:
+        drink = Drink(title=title, recipe=recipe)
+        drink.insert()
+
+        return jsonify({
+            'success': True,
+            'drinks': drink.long()
+        })
+    except Exception:
+        abort(422)
 
 '''
 @TODO implement endpoint
@@ -87,7 +103,31 @@ def get_drinks_detail():
     returns status code 200 and json {"success": True, "drinks": drink} where drink an array containing only the updated drink
         or appropriate status code indicating reason for failure
 '''
+@app.route('/drinks/<int:id>')
+@requires_auth('patch:drinks')
+def update_drink(id):
+    try: 
+        body = request.get_json()
 
+        title = body.get('title')
+        recipe = body.get('recipe')
+
+        try:
+            drink = Drink.query.filter(Drink.id == id).first()
+        except Exception:
+            abort(404)
+        
+        drink.title = title
+        drink.recipe = json.dumps(recipe) 
+
+        drink.update()
+        
+        return jsonify({
+            'success': True,
+            'drinks': drink.long()
+        })
+    except Exception:
+        abort(422)
 
 '''
 @TODO implement endpoint
