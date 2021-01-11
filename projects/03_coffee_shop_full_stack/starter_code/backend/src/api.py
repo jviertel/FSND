@@ -76,7 +76,7 @@ def get_drinks_detail(payload):
 '''
 @app.route('/drinks', methods=['POST'])
 @requires_auth('post:drinks')
-def create_drink():
+def create_drink(payload):
     body = request.get_json()
 
     title = body.get('title', None)
@@ -105,7 +105,7 @@ def create_drink():
 '''
 @app.route('/drinks/<int:id>', methods=["PATCH"])
 @requires_auth('patch:drinks')
-def update_drink(id):
+def update_drink(payload, id):
     try: 
         body = request.get_json()
 
@@ -141,7 +141,7 @@ def update_drink(id):
 '''
 @app.route('/drinks/<int:id>', methods=['DELETE'])
 @requires_auth('delete:drinks')
-def delete_drink(id):
+def delete_drink(payload, id):
     try:
         drink = Drink.query.filter(Drink.id == id).first()
     except Exception:
