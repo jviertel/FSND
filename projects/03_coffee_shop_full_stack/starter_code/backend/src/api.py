@@ -196,9 +196,5 @@ def not_found(error):
 '''
 @app.errorhandler(AuthError)
 def authentication_error(error):
-    return jsonify({
-        'success': False,
-        'error': 401,
-        'message': 'authentication error'
-    }), 401
+    return jsonify(error.error), error.status_code #Cite: 1/11/2021 https://knowledge.udacity.com/questions/204223
 
