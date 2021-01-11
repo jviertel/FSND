@@ -60,7 +60,7 @@ def check_permissions(permission, payload):
         raise AuthError('Permissions not in payload', 400)
 
     if permission not in payload['permissions']:
-        raise AuthError('Permission not in permissions list', 403)
+        raise AuthError('Permission not in permissions list', 401)
     return True
 
 
