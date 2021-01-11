@@ -200,5 +200,5 @@ def authentication_error(error):
         'success': False,
         'error': 401,
         'message': 'authentication error'
-    })
+    }), 401
 
