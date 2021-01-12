@@ -5,9 +5,9 @@ from jose import jwt
 from urllib.request import urlopen
 
 
-AUTH0_DOMAIN = 'udacity-fsnd.auth0.com'
+AUTH0_DOMAIN = 'dev-yk2mgtma.us.auth0.com'
 ALGORITHMS = ['RS256']
-API_AUDIENCE = 'dev'
+API_AUDIENCE = 'coffee_shop'
 
 ## AuthError Exception
 '''
@@ -31,7 +31,18 @@ class AuthError(Exception):
     return the token part of the header
 '''
 def get_token_auth_header():
-   raise Exception('Not Implemented')
+    if 'Authorization' not in request.headers:
+        raise AuthError('No header present', 401)
+
+    header = request.headers["Authorization"]
+
+    split_header = header.split(' ')
+
+    if (len(split_header) !=2) or (split_header[0].lower() != 'bearer'): 
+        raise AuthError('Malformed header', 401)
+
+    token = split_header[1]
+    return token
 
 '''
 @TODO implement check_permissions(permission, payload) method
@@ -45,7 +56,13 @@ def get_token_auth_header():
     return true otherwise
 '''
 def check_permissions(permission, payload):
-    raise Exception('Not Implemented')
+    if 'permissions' not in payload:
+        raise AuthError('Permissions not in payload', 400)
+
+    if permission not in payload['permissions']:
+        raise AuthError('Permission not in permissions list', 401)
+    return True
+
 
 '''
 @TODO implement verify_decode_jwt(token) method
@@ -61,7 +78,44 @@ def check_permissions(permission, payload):
     !!NOTE urlopen has a common certificate error described here: https://stackoverflow.com/questions/50236117/scraping-ssl-certificate-verify-failed-error-for-http-en-wikipedia-org
 '''
 def verify_decode_jwt(token):
-    raise Exception('Not Implemented')
+    key_url = urlopen(f'https://{AUTH0_DOMAIN}/.well-known/jwks.json')
+    keys = json.loads(key_url.read())
+    unverified_header = jwt.get_unverified_header(token)
+
+    rsa_key = {}
+    if 'kid' not in unverified_header:
+        raise AuthError('No kid in header', 401)
+
+    for key in keys['keys']:
+        if key['kid'] == unverified_header['kid']:
+            rsa_key = {
+                'kty': key['kty'],
+                'kid': key['kid'],
+                'use': key['use'],
+                'n': key['n'],
+                'e': key['e']
+            } 
+    
+    if rsa_key:
+        try:
+            payload = jwt.decode(token, rsa_key, algorithms=ALGORITHMS, audience=API_AUDIENCE, issuer='https://' + AUTH0_DOMAIN + '/')
+            return payload
+
+        except jwt.ExpiredSignatureError:
+            raise AuthError('Token expired', 401)
+
+        except jwt.JWTClaimsError:
+            raise AuthError('Invalid claims', 401)
+
+        except Exception:
+            raise AuthError('Cannot parse token', 400)
+    
+    raise AuthError('Cannot find key', 400)
+
+
+
+
+
 
 '''
 @TODO implement @requires_auth(permission) decorator method

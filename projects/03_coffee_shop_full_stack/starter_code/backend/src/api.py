@@ -16,7 +16,7 @@ CORS(app)
 !! NOTE THIS WILL DROP ALL RECORDS AND START YOUR DB FROM SCRATCH
 !! NOTE THIS MUST BE UNCOMMENTED ON FIRST RUN
 '''
-# db_drop_and_create_all()
+db_drop_and_create_all()
 
 ## ROUTES
 '''
@@ -27,6 +27,19 @@ CORS(app)
     returns status code 200 and json {"success": True, "drinks": drinks} where drinks is the list of drinks
         or appropriate status code indicating reason for failure
 '''
+@app.route('/drinks')
+def get_drinks():
+    try: 
+        drink_objects = Drink.query.all()
+        drinks = []
+        for drink in drink_objects:
+            drinks.append(drink.short())
+        return jsonify({
+            'success': True,
+            'drinks': drinks
+        })
+    except Exception: 
+        abort(404)
 
 
 '''
@@ -37,7 +50,20 @@ CORS(app)
     returns status code 200 and json {"success": True, "drinks": drinks} where drinks is the list of drinks
         or appropriate status code indicating reason for failure
 '''
-
+@app.route('/drinks-detail')
+@requires_auth('get:drinks-detail')
+def get_drinks_detail(payload):
+    try:
+        drink_objects = Drink.query.all()
+        drinks = []
+        for drink in drink_objects:
+            drinks.append(drink.long())
+        return jsonify({
+            'success': True, 
+            'drinks': drinks
+        })
+    except Exception:
+        abort(404)
 
 '''
 @TODO implement endpoint
@@ -48,7 +74,23 @@ CORS(app)
     returns status code 200 and json {"success": True, "drinks": drink} where drink an array containing only the newly created drink
         or appropriate status code indicating reason for failure
 '''
+@app.route('/drinks', methods=['POST'])
+@requires_auth('post:drinks')
+def create_drink(payload):
+    body = request.get_json()
 
+    title = body.get('title', None)
+    recipe = body.get('recipe', None)
+    try:
+        drink = Drink(title=title, recipe=recipe)
+        drink.insert()
+
+        return jsonify({
+            'success': True,
+            'drinks': drink.long()
+        }), 200
+    except Exception:
+        abort(422)
 
 '''
 @TODO implement endpoint
@@ -61,7 +103,31 @@ CORS(app)
     returns status code 200 and json {"success": True, "drinks": drink} where drink an array containing only the updated drink
         or appropriate status code indicating reason for failure
 '''
+@app.route('/drinks/<int:id>', methods=["PATCH"])
+@requires_auth('patch:drinks')
+def update_drink(payload, id):
+    try: 
+        body = request.get_json()
 
+        title = body.get('title')
+        recipe = body.get('recipe')
+
+        
+        drink = Drink.query.filter(Drink.id == id).first()
+        if drink == None:
+            abort(404)
+        
+        drink.title = title
+        drink.recipe = json.dumps(recipe) 
+
+        drink.update()
+        
+        return jsonify({
+            'success': True,
+            'drinks': drink.long()
+        }), 200
+    except Exception:
+        abort(422)
 
 '''
 @TODO implement endpoint
@@ -73,6 +139,19 @@ CORS(app)
     returns status code 200 and json {"success": True, "delete": id} where id is the id of the deleted record
         or appropriate status code indicating reason for failure
 '''
+@app.route('/drinks/<int:id>', methods=['DELETE'])
+@requires_auth('delete:drinks')
+def delete_drink(payload, id):
+    drink = Drink.query.filter(Drink.id == id).first()
+
+    if drink == None:
+        abort(404)
+    
+    drink.delete()
+    return jsonify({
+        'success': True, 
+        'delete': id
+    }), 200
 
 
 ## Error Handling
@@ -102,9 +181,20 @@ def unprocessable(error):
 @TODO implement error handler for 404
     error handler should conform to general task above 
 '''
+@app.errorhandler(404)
+def not_found(error):
+    return jsonify({
+        'success': False,
+        'error': 404,
+        'message': 'resource not found'
+    }), 404
 
 
 '''
 @TODO implement error handler for AuthError
     error handler should conform to general task above 
 '''
+@app.errorhandler(AuthError)
+def authentication_error(error):
+    return jsonify(error.error), error.status_code #Cite: 1/11/2021 https://knowledge.udacity.com/questions/204223
+
