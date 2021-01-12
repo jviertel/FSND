@@ -88,7 +88,7 @@ def create_drink(payload):
         return jsonify({
             'success': True,
             'drinks': drink.long()
-        })
+        }), 200
     except Exception:
         abort(422)
 
@@ -125,7 +125,7 @@ def update_drink(payload, id):
         return jsonify({
             'success': True,
             'drinks': drink.long()
-        })
+        }), 200
     except Exception:
         abort(422)
 
@@ -151,7 +151,7 @@ def delete_drink(payload, id):
     return jsonify({
         'success': True, 
         'delete': id
-    })
+    }), 200
 
 
 ## Error Handling
