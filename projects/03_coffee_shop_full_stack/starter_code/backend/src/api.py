@@ -112,9 +112,9 @@ def update_drink(payload, id):
         title = body.get('title')
         recipe = body.get('recipe')
 
-        try:
-            drink = Drink.query.filter(Drink.id == id).first()
-        except Exception:
+        
+        drink = Drink.query.filter(Drink.id == id).first()
+        if drink == None:
             abort(404)
         
         drink.title = title
