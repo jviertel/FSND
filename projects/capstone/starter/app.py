@@ -5,6 +5,7 @@ from flask_cors import CORS
 from flask_migrate import Migrate
 from models import Pedal, Manufacturer, setup_db
 
+#Configure app
 def create_app(test_config=None):
   # create and configure the app
   app = Flask(__name__)
