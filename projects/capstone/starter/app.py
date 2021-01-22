@@ -5,7 +5,7 @@ from flask_cors import CORS
 from flask_migrate import Migrate
 from models import Pedal, Manufacturer
 
-database_path = 'postgresql://postgres:88c67e0d53bef241b661e0e3a6cb0cd1@localhost:5432/trivia'
+database_path = 'postgresql://postgres:88c67e0d53bef241b661e0e3a6cb0cd1@localhost:5432/pedalsdb'
 
 def create_app(test_config=None):
   # create and configure the app
