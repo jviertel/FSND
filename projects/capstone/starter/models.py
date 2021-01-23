@@ -21,8 +21,6 @@ class Manufacturer(db.Model):
     __tablename__ = 'Manufacturer'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120))
-    image_link = db.Column(db.String(500))
-    fb_link = db.Column(db.String(500))
     website_link = db.Column(db.String(500))
 
 '''
