@@ -13,7 +13,7 @@ def create_app(test_config=None):
   CORS(app)
   return app
   
-APP = create_app()
+app = create_app()
 
 @app.after_request
 def after_request(response):
@@ -63,4 +63,4 @@ def delete_pedals(pedal_id):
   pass
 
 if __name__ == '__main__':
-    APP.run(host='0.0.0.0', port=8080, debug=True)
+    app.run(host='0.0.0.0', port=8080, debug=True)
