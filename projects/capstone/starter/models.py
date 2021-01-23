@@ -33,7 +33,6 @@ class Pedal(db.Model):
     pedal_type = db.Column(db.String(120))
     new_price = db.Column(db.String)
     used_price = db.Column(db.String)
-    image_link = db.Column(db.String(500))
     manufacturer_id = db.Column(db.Integer, db.ForeignKey('Pedal.id', ondelete='CASCADE'), nullable=False)
 
 
