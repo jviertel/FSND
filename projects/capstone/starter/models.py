@@ -20,7 +20,7 @@ Manufacturer
 class Manufacturer(db.Model):
     __tablename__ = 'Manufacturer'
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(120))
+    name = db.Column(db.String(120)) 
     website_link = db.Column(db.String(500))
 
 '''
