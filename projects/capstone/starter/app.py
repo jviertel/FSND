@@ -87,5 +87,46 @@ def delete_manufacturer(manufacturer_id):
 def delete_pedals(pedal_id):
   pass
 
+#Error handlers
+@app.errorhandler(400)
+def bad_request(error):
+  return jsonify({
+    'error': 400,
+    'success': False,
+    'message': 'bad request'
+  }), 400
+
+@app.errorhandler(404)
+def resource_not_found(error):
+  return jsonify({
+    'error': 404,
+    'success': False, 
+    'message': 'resource was not found'
+  }), 404
+
+@app.errorhandler(405)
+def method_not_allowed(error):
+  return jsonify({
+    'error': 405,
+    'success': False,
+    'message': 'method not allowed'
+  })
+
+@app.errorhandler(422)
+def unprocessable_entity(error):
+  return jsonify({
+    'error': 422,
+    'success': False,
+    'message': 'unprocessable entity'
+  }), 422
+
+@app.errorhandler(500)
+def internal_server_error(error):
+  return jsonify({
+    'error': 500,
+    'success': False,
+    'message': 'internal server error'
+  }), 500
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080, debug=True)
