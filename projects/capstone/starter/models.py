@@ -23,6 +23,13 @@ class Manufacturer(db.Model):
     name = db.Column(db.String(120)) 
     website_link = db.Column(db.String(500))
 
+    def format(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'website_link': self.website_link
+        }
+
 '''
 Pedal
 '''
