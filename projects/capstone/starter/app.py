@@ -40,16 +40,16 @@ def paginate(objects, request):
 #Endpoint to handle GET requests for all Manufacturers
 @app.route('/manufacturers', methods=['GET'])
 def get_manufacturers():
-  manufacturerObjects = Manufacturer.query.order_by(Manufacturer.id).all()
+  manufacturer_objects = Manufacturer.query.order_by(Manufacturer.id).all()
   
-  if len(manufacturers) == 0:
+  if len(manufacturer_objects) == 0:
     abort(404)
   
-  current_page = paginate(manufacturerObjects, request)
+  current_page = paginate(manufacturer_objects, request)
   
   return jsonify({
     'manufacturers': current_page,
-    'num_manufacturers': len(manufacturerObjects),
+    'num_manufacturers': len(manufacturer_objects),
     'success': True
   })
   
