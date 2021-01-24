@@ -21,11 +21,30 @@ def after_request(response):
   response.headers.add('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS')
 
 #Helper functions
+def list_manufacturers():
+  manufacturers = Manufacturer.query.all()
+  manufacturers_dict = {}
+
+  for m in manufacturers:
+    manufacturers_dict[m.id] = [m.name, m.website_link]
+  
+  return manufacturers_dict
+
 
 #Endpoint to handle GET requests for all Manufacturers
 @app.route('/manufacturers', methods=['GET'])
 def get_manufacturers():
-  pass
+  manufacturers = Manufacturer.query.order_by(Manufacturer.id).all()
+
+  if len(manufacturers) == 0:
+    abort(404)
+  
+  return jsonify({
+    'manufacturers': list_manufacturers(),
+    'num_manufacturers': len(manufacturers),
+    'success': True
+  })
+  
 
 #Endpoint to handle GET requests for pedals by manufacturer
 @app.route('/manufacturers/<int:manufacturer_id>/pedals', methods=['GET'])
