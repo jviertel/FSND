@@ -21,27 +21,33 @@ def after_request(response):
   response.headers.add('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS')
 
 #Helper functions
-def list_manufacturers():
-  manufacturers = Manufacturer.query.all()
-  manufacturers_dict = {}
+def paginate(objects, request):
+    pg = request.args.get('page', 1, type=int)
+    if len(objects) == 0:
+      abort(404)
 
-  for m in manufacturers:
-    manufacturers_dict[m.id] = [m.name, m.website_link]
-  
-  return manufacturers_dict
+    if pg > (len(objects)/20 + 1): 
+      abort(404)
+    firstItem = 20 * (pg -1)
+    lastItem = firstItem + 20
+    objects = [o.format() for o in objects] #Cite: 1/23/20 https://classroom.udacity.com/nanodegrees/nd0044/parts/838df8a7-4694-4982-a9a5-a5ab20247776/modules/af3a044c-37df-4ceb-8b0a-01c45cad6511/lessons/123d0a0a-8137-4e21-881f-8d03fb371209/concepts/7529c53d-c671-4ec7-bd7b-81ea374f72e3
+    current_page = objects[firstItem:lastItem]
 
+    return current_page
 
 #Endpoint to handle GET requests for all Manufacturers
 @app.route('/manufacturers', methods=['GET'])
 def get_manufacturers():
-  manufacturers = Manufacturer.query.order_by(Manufacturer.id).all()
-
+  manufacturerObjects = Manufacturer.query.order_by(Manufacturer.id).all()
+  
   if len(manufacturers) == 0:
     abort(404)
   
+  current_page = paginate(manufacturerObjects, request)
+  
   return jsonify({
-    'manufacturers': list_manufacturers(),
-    'num_manufacturers': len(manufacturers),
+    'manufacturers': current_page,
+    'num_manufacturers': len(manufacturerObjects),
     'success': True
   })
   
