@@ -63,7 +63,7 @@ class TestPedalsAPI(unittest.TestCase):
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'resource was not found')
 
-    #Test successful post request to /manufacturers
+    #Test post request to /manufacturers
     def test_post_manufacturer(self):
         res = self.client().post('/manufacturers', 
             json = {
@@ -93,7 +93,42 @@ class TestPedalsAPI(unittest.TestCase):
         self.assertTrue(data['num_manufacturers'])
         self.assertEqual(data['success'], False)
     
-    
+    #Test post request to /pedals
+    def test_post_pedal(self):
+        res = self.client().post('/pedals',
+            json = {
+                'name': 'California Surf',
+                'pedal_type': 'Reverb',
+                'new_price': '$99.00',
+                'used_price': '$65.00',
+                'manufacturer_id': 37
+            })
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertTrue(data['created_pedal'])
+        self.assertTrue(len(data['pedals']))
+        self.assertTrue(data['num_pedals'])
+        self.assertEqual(data['success'], True)
+
+    #Test unsuccessful post request entry already exists to /pedals
+    def test_pedal_already_exists(self):
+        res = self.client().post('/pedals',
+            json = {
+                'name': 'Afterglow',
+                'pedal_type': 'Chorus',
+                'new_price': '$69.00',
+                'used_price': '$39.00',
+                'manufacturer_id': 43
+            })
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['created_pedal'], None)
+        self.assertTrue(len(data['pedals']))
+        self.assertTrue(data['num_pedals'])
+        self.assertEqual(data['success'], False)
+
 
 
 
