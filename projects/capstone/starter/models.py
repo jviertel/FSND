@@ -42,5 +42,14 @@ class Pedal(db.Model):
     used_price = db.Column(db.String)
     manufacturer_id = db.Column(db.Integer, db.ForeignKey('Pedal.id', ondelete='CASCADE'), nullable=False)
 
+    def format(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'pedal_type': self.pedal_type,
+            'new_price': self.new_price,
+            'used_price': self.used_price,
+            'manufacturer_id': self.manufacturer_id
+        }
 
 
