@@ -50,7 +50,7 @@ class TestPedalsAPI(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['manufacturer_id'], 5)
         self.assertTrue(data['manufacturer_name'])
-        self.asserTrue(len(data['pedals']))
+        self.assertTrue(len(data['pedals']))
         self.assertTrue(data['num_pedals'])    
         self.assertEqual(data['success'], True)
     

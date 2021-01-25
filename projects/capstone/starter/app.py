@@ -54,7 +54,12 @@ def create_app(test_config=None):
   @app.route('/manufacturers/<int:manufacturer_id>/pedals', methods=['GET'])
   def get_pedals_by_manufacturer(manufacturer_id):
     pedals_by_manufacturer_objects = Pedal.query.filter(Pedal.manufacturer_id == manufacturer_id).all()
-    manufacturer_name = Manufacturer.query.filter(Manufacturer.id == manufacturer_id).first().name
+    manufacturer = Manufacturer.query.filter(Manufacturer.id == manufacturer_id).first()
+
+    if manufacturer is None:
+      abort(404)
+    
+    manufacturer_name = manufacturer.name
 
     if len(pedals_by_manufacturer_objects) == 0:
       abort(404)
@@ -63,7 +68,7 @@ def create_app(test_config=None):
 
     return jsonify({
       'manufacturer_id': manufacturer_id,
-      'manufacturer_nane': manufacturer_name,
+      'manufacturer_name': manufacturer_name,
       'pedals': current_page,
       'num_pedals': len(pedals_by_manufacturer_objects),
       'success': True
