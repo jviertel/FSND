@@ -53,7 +53,21 @@ def create_app(test_config=None):
   #Endpoint to handle GET requests for pedals by manufacturer
   @app.route('/manufacturers/<int:manufacturer_id>/pedals', methods=['GET'])
   def get_pedals_by_manufacturer(manufacturer_id):
-    pass
+    pedals_by_manufacturer_objects = Pedal.query.filter(Pedal.manufacturer_id == manufacturer_id).all()
+    manufacturer_name = Manufacturer.query.filter(Manufacturer.id == manufacturer_id).first().name
+
+    if len(pedals_by_manufacturer_objects) == 0:
+      abort(404)
+    
+    current_page = paginate(pedals_by_manufacturer_objects, request)
+
+    return jsonify({
+      'manufacturer_id': manufacturer_id,
+      'manufacturer_nane': manufacturer_name,
+      'pedals': current_page,
+      'num_pedals': len(pedals_by_manufacturer_objects),
+      'success': True
+    })
 
   #Endpoint to handle POST requests for new manufacturer
   @app.route('/manufacturers', methods=['POST'])
