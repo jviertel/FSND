@@ -113,7 +113,40 @@ def create_app(test_config=None):
   #Endpoint to handle POST requests for new pedal
   @app.route('/pedals', methods=['POST'])
   def create_pedals():
-    pass
+    body = request.get_json()
+    name = body.get('name', None)
+    pedal_type = body.get('pedal_type', None)
+    new_price = body.get('new_price', None)
+    used_price = body.get('used_price', None)
+    manufacturer_id = body.get('manufacturer_id', None)
+
+    try:
+      pedal = Pedal(name=name, pedal_type=pedal_type, new_price=new_price, used_price=used_price, manufacturer_id=manufacturer_id)
+      exists = Pedal.query.filter(Pedal.name == name).one_or_none()
+      if exists == None:
+        pedal.insert()
+
+        pedals = Pedal.query.all()
+        current_page = paginate(pedals, request)
+
+        return jsonify({
+          'created_pedal': pedal.id,
+          'pedals': current_page,
+          'num_pedals': len(pedals),
+          'success': True
+        })
+      else:
+        pedals = Pedal.query.all()
+        current_page = paginate(pedals, request)
+
+        return jsonify({
+          'created_pedal': None,
+          'pedals': current_page,
+          'num_pedals': len(pedals),
+          'success': False  
+        })
+    except Exception: 
+      abort(422)
 
   #Endpoint to handle PATCH requests for manufacturers
   @app.route('/manufacturers/<int:manufacturer_id>', methods=['PATCH'])
