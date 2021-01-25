@@ -29,6 +29,17 @@ class Manufacturer(db.Model):
             'name': self.name,
             'website_link': self.website_link
         }
+    
+    def insert(self):
+        db.session.add(self)
+        db.session.commit()
+    
+    def update(self):
+        db.session.commit()
+    
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
 
 '''
 Pedal
@@ -51,5 +62,16 @@ class Pedal(db.Model):
             'used_price': self.used_price,
             'manufacturer_id': self.manufacturer_id
         }
+    
+    def insert(self):
+        db.session.add(self)
+        db.session.commit()
+    
+    def update(self):
+        db.session.commit()
+    
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
 
 
