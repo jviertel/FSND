@@ -179,12 +179,40 @@ def create_app(test_config=None):
   #Endpoint to handle PATCH requests for pedals
   @app.route('/pedals/<int:pedal_id>', methods=['PATCH'])
   def update_pedals(pedal_id):
-    pass
+    body = request.get_json()
+    name = body.get('name', None)
+    pedal_type = body.get('pedal_type', None)
+    new_price = body.get('new_price', None)
+    used_price = body.get('used_price', None)
+    manufacturer_id = body.get('manufacturer_id', None)
+
+    pedal = Pedal.query.filter(Pedal.id == pedal_id).one_or_none()
+
+    if pedal is None:
+      abort(404)
+    
+    pedal.name = name
+    pedal.pedal_type = pedal_type
+    pedal.new_price = new_price
+    pedal.used_price = used_price
+    pedal.manufacturer_id =  manufacturer_id
+
+    pedal.update()
+
+    pedals = Pedal.query.all()
+    current_page = paginate(pedals, request)
+
+    return jsonify({
+      'updated_pedal': pedal.id,
+      'pedals': current_page,
+      'num_pedals': len(pedals),
+      'success': True
+    })
 
   #Endpoint to handle DELETE requests for manufacturers
   @app.route('/manufacturers/<int:manufacturer_id>', methods=['DELETE'])
   def delete_manufacturer(manufacturer_id):
-    pass
+    pass 
 
   #Endpoint to handle DELETE requests for pedals
   @app.route('/pedals/<int:pedal_id>', methods=['DELETE'])
