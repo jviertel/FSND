@@ -57,7 +57,7 @@ def create_app(test_config=None):
     manufacturer = Manufacturer.query.filter(Manufacturer.id == manufacturer_id).first()
 
     if manufacturer is None:
-      abort(404)
+      abort(404) 
     
     manufacturer_name = manufacturer.name
 
@@ -76,8 +76,39 @@ def create_app(test_config=None):
 
   #Endpoint to handle POST requests for new manufacturer
   @app.route('/manufacturers', methods=['POST'])
-  def create_manufacturers():
-    pass
+  def create_manufacturer():
+    body = request.get_json()
+    name = body.get('name', None)
+    website_link = body.get('website_link', None)
+    try:
+      manufacturer = Manufacturer(name=name, website_link=website_link)
+      exists = Manufacturer.query.filter(Manufacturer.name == name).one_or_none()
+      if exists == None:
+        manufacturer.insert()
+
+        manufacturers = Manufacturer.query.all()
+        current_page = paginate(manufacturers, request)
+
+        return jsonify({
+          'created_manufacturer': manufacturer.id,
+          'manufacturers': current_page,
+          'num_manufacturers': len(manufacturers),
+          'success': True
+        })
+      else:
+        manufacturers = Manufacturer.query.all()
+        current_page = paginate(manufacturers, request)
+
+        return jsonify({
+          'created_manufacturer': None,
+          'manufacturers': current_page,
+          'num_manufacturers': len(manufacturers),
+          'success': False  
+        })
+    except Exception: 
+      abort(422)
+
+    
 
   #Endpoint to handle POST requests for new pedal
   @app.route('/pedals', methods=['POST'])
