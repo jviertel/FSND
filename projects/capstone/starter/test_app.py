@@ -32,9 +32,31 @@ class TestPedalsAPI(unittest.TestCase):
         self.assertTrue(data['num_manufacturers'])
         self.assertTrue(len(data['manufacturers']))
         self.assertEqual(data['success'], True)
-    
+
+    #Test 404 for page out of bounds
     def test_manufacturers_404_page_out_of_bounds(self):
         res = self.client().get('/manufacturers?page=5000')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'resource was not found')
+
+    #Test successful get request to /manufacturers/5/pedals
+    def test_get_pedals_by_manufacturer(self):
+        res = self.client().get('/manufacturers/5/pedals')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['manufacturer_id'], 5)
+        self.assertTrue(data['manufacturer_name'])
+        self.asserTrue(len(data['pedals']))
+        self.assertTrue(data['num_pedals'])    
+        self.assertEqual(data['success'], True)
+    
+    #Test 404 for page out of bounds
+    def test_404_manufacturer_not_exists(self):
+        res = self.client().get('/manufacturers/5000/pedals')
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 404)
