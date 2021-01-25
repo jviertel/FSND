@@ -151,7 +151,30 @@ def create_app(test_config=None):
   #Endpoint to handle PATCH requests for manufacturers
   @app.route('/manufacturers/<int:manufacturer_id>', methods=['PATCH'])
   def update_manufacturers(manufacturer_id):
-    pass
+    body = request.get_json()
+    name = body.get('name', None)
+    website_link = body.get('website_link', None)
+
+    manufacturer = Manufacturer.query.filter(Manufacturer.id == manufacturer_id).one_or_none()
+
+    if manufacturer is None:
+      abort(404)
+    
+    manufacturer.name = name
+    manufacturer.website_link = website_link
+
+    manufacturer.update()
+
+    manufacturers = Manufacturer.query.all()
+    current_page = paginate(manufacturers, request)
+
+    return jsonify({
+      'updated_manufacturer': manufacturer.id,
+      'manufacturers': current_page,
+      'num_manufacturers': len(manufacturers),
+      'success': True
+    })
+
 
   #Endpoint to handle PATCH requests for pedals
   @app.route('/pedals/<int:pedal_id>', methods=['PATCH'])
