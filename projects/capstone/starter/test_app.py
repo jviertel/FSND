@@ -129,7 +129,33 @@ class TestPedalsAPI(unittest.TestCase):
         self.assertTrue(data['num_pedals'])
         self.assertEqual(data['success'], False)
 
+    #Test patch request to /manufacturers/37
+    def test_update_manufacturer(self):
+        res = self.client().patch('/manufacturers/37',
+            json = {
+                'name': 'Changed Name',
+                'website_link': 'https://www.pedals.info.com'
+            })
+        data = json.loads(res.data)
 
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['updated_manufacturer'], 37)
+        self.assertTrue(len(data['manufacturers']))
+        self.assertTrue(data['num_manufacturers'])
+        self.assertEqual(data['success'], True)
+    
+    #Test unsuccessful patch request not found to /manufacturers/5000
+    def test_patch_404_manufacturer_not_exists(self):
+        res = self.client().patch('/manufacturers/5000',
+            json = {
+                'name': 'Changed Name',
+                'website_link': 'https://www.pedals.info.com'
+            })
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'resource was not found')
+        
 
 
 if __name__ == '__main__':
