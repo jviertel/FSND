@@ -63,5 +63,39 @@ class TestPedalsAPI(unittest.TestCase):
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'resource was not found')
 
+    #Test successful post request to /manufacturers
+    def test_post_manufacturer(self):
+        res = self.client().post('/manufacturers', 
+            json = {
+                'name': 'Volcanic Audio',
+                'website_link': 'https://www.volcanicaudio.com'
+            })
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertTrue(data['created_manufacturer'])
+        self.assertTrue(len(data['manufacturers']))
+        self.assertTrue(data['num_manufacturers'])
+        self.assertEqual(data['success'], True)
+
+    #Test unsuccessful post request entry already exists to /manufacturers
+    def test_manufacturer_already_exists(self):
+        res = self.client().post('/manufacturers',
+            json = {
+                'name': 'Boss',
+                'website_link': 'https://www.bossaudio.com'
+            })
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['created_manufacturer'], None)
+        self.assertTrue(len(data['manufacturers']))
+        self.assertTrue(data['num_manufacturers'])
+        self.assertEqual(data['success'], False)
+    
+    
+
+
+
 if __name__ == '__main__':
     unittest.main()
