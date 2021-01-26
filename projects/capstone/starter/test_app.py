@@ -185,6 +185,7 @@ class TestPedalsAPI(unittest.TestCase):
                 'manufacturer_id': 25
             })
         data = json.loads(res.data)
+        
         self.assertEqual(res.status_code, 404)
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'resource was not found')
@@ -203,6 +204,27 @@ class TestPedalsAPI(unittest.TestCase):
     #Test delete manufacturer not found to /manufacturers/5000
     def test_404_manufacturer_to_delete_not_exists(self):
         res = self.client().delete('/manufacturers/5000')
+        data = json.loads(res.data)
+
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'resource was not found')
+    
+    #Test delete request to /pedals/600
+    def test_delete_pedal(self):
+        res = self.client().delete('/pedals/600')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['deleted_pedal'], 600)
+        self.assertTrue(len(data['pedals']))
+        self.assertTrue(data['num_pedals'])
+        self.assertEqual(data['success'], True)    
+
+    #Test delete manufacturer not found to /manufacturers/5000
+    def test_404_pedal_to_delete_not_exists(self):
+        res = self.client().delete('/pedals/5000')
         data = json.loads(res.data)
 
         data = json.loads(res.data)
