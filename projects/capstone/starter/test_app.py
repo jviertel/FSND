@@ -185,7 +185,7 @@ class TestPedalsAPI(unittest.TestCase):
                 'manufacturer_id': 25
             })
         data = json.loads(res.data)
-        
+
         self.assertEqual(res.status_code, 404)
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'resource was not found')
@@ -231,9 +231,6 @@ class TestPedalsAPI(unittest.TestCase):
         self.assertEqual(res.status_code, 404)
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'resource was not found')
-
-    
-        
 
 if __name__ == '__main__':
     unittest.main()
