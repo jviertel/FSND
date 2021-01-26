@@ -212,12 +212,42 @@ def create_app(test_config=None):
   #Endpoint to handle DELETE requests for manufacturers
   @app.route('/manufacturers/<int:manufacturer_id>', methods=['DELETE'])
   def delete_manufacturer(manufacturer_id):
-    pass 
+    manufacturer = Manufacturer.query.filter(Manufacturer.id == manufacturer_id).one_or_none()
+    if manufacturer is None:
+      abort(404)
+    try:
+      manufacturer.delete()
+      manufacturers = Manufacturer.query.all()
+      current_page = paginate(manufacturers, request)
+    except Exception:
+      abort(422)
+    
+    return jsonify({
+      'deleted_manufacturer': manufacturer_id,
+      'manufacturers': current_page,
+      'num_manufacturers': len(manufacturers),
+      'success': True
+    })
 
   #Endpoint to handle DELETE requests for pedals
   @app.route('/pedals/<int:pedal_id>', methods=['DELETE'])
   def delete_pedals(pedal_id):
-    pass
+    pedal = Pedal.query.filter(Pedal.id == pedal_id).one_or_none()
+    if pedal is None:
+      abort(404)
+    try:
+      pedal.delete()
+      pedals = Pedal.query.all()
+      current_page = paginate(pedals, request)
+    except Exception:
+      abort(422)
+    
+    return jsonify({
+      'deleted_pedal': pedal_id,
+      'pedals': current_page,
+      'num_pedals': len(pedals),
+      'success': True
+    })
 
   #Error handlers
   @app.errorhandler(400)
