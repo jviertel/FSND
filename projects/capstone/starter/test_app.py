@@ -155,6 +155,39 @@ class TestPedalsAPI(unittest.TestCase):
         self.assertEqual(res.status_code, 404)
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'resource was not found')
+    
+    #Test patch request to /pedals/472
+    def test_update_pedals(self):
+        res = self.client().patch('/pedals/472',
+            json = {
+                'name': 'Hot Rod',
+                'pedal_type': 'Distortion',
+                'new_price': '$79.00',
+                'used_price': '$45.00',
+                'manufacturer_id': 25
+            })
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['updated_pedal'], 472)
+        self.assertTrue(len(data['pedals']))
+        self.assertTrue(data['num_pedals'])
+        self.assertEqual(data['success'], True)
+    
+    #Test unsuccessful patch request not found to /pedals/5000
+    def test_patch_404_pedal_not_exists(self):
+        res = self.client().patch('/pedals/5000',
+            json = {
+                'name': 'Hot Rod',
+                'pedal_type': 'Distortion',
+                'new_price': '$79.00',
+                'used_price': '$45.00',
+                'manufacturer_id': 25
+            })
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'resource was not found')
         
 
 
