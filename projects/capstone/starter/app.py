@@ -77,7 +77,8 @@ def create_app(test_config=None):
 
   #Endpoint to handle POST requests for new manufacturer
   @app.route('/manufacturers', methods=['POST'])
-  def create_manufacturer():
+  @requires_auth('post:manufacturers')
+  def create_manufacturer(payload):
     body = request.get_json()
     name = body.get('name', None)
     website_link = body.get('website_link', None)
@@ -113,7 +114,8 @@ def create_app(test_config=None):
 
   #Endpoint to handle POST requests for new pedal
   @app.route('/pedals', methods=['POST'])
-  def create_pedals():
+  @requires_auth('post:pedals')
+  def create_pedals(payload):
     body = request.get_json()
     name = body.get('name', None)
     pedal_type = body.get('pedal_type', None)
@@ -151,7 +153,8 @@ def create_app(test_config=None):
 
   #Endpoint to handle PATCH requests for manufacturers
   @app.route('/manufacturers/<int:manufacturer_id>', methods=['PATCH'])
-  def update_manufacturers(manufacturer_id):
+  @requires_auth('patch:manufacturers')
+  def update_manufacturers(payload, manufacturer_id):
     body = request.get_json()
     name = body.get('name', None)
     website_link = body.get('website_link', None)
@@ -179,7 +182,8 @@ def create_app(test_config=None):
 
   #Endpoint to handle PATCH requests for pedals
   @app.route('/pedals/<int:pedal_id>', methods=['PATCH'])
-  def update_pedals(pedal_id):
+  @requires_auth('patch:pedals')
+  def update_pedals(payload, pedal_id):
     body = request.get_json()
     name = body.get('name', None)
     pedal_type = body.get('pedal_type', None)
@@ -212,7 +216,8 @@ def create_app(test_config=None):
 
   #Endpoint to handle DELETE requests for manufacturers
   @app.route('/manufacturers/<int:manufacturer_id>', methods=['DELETE'])
-  def delete_manufacturer(manufacturer_id):
+  @requires_auth('delete:manufacturers')
+  def delete_manufacturer(payload, manufacturer_id):
     manufacturer = Manufacturer.query.filter(Manufacturer.id == manufacturer_id).one_or_none()
     if manufacturer is None:
       abort(404)
@@ -232,7 +237,8 @@ def create_app(test_config=None):
 
   #Endpoint to handle DELETE requests for pedals
   @app.route('/pedals/<int:pedal_id>', methods=['DELETE'])
-  def delete_pedals(pedal_id):
+  @requires_auth('delete:pedals')
+  def delete_pedals(payload, pedal_id):
     pedal = Pedal.query.filter(Pedal.id == pedal_id).one_or_none()
     if pedal is None:
       abort(404)
