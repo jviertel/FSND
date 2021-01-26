@@ -188,8 +188,30 @@ class TestPedalsAPI(unittest.TestCase):
         self.assertEqual(res.status_code, 404)
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'resource was not found')
-        
 
+    #Test delete request to /manufacturers/29
+    def test_delete_manufacturer(self):
+        res = self.client().delete('/manufacturers/29')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['deleted_manufacturer'], 29)
+        self.assertTrue(len(data['manufacturers']))
+        self.assertTrue(data['num_manufacturers'])
+        self.assertEqual(data['success'], True)    
+
+    #Test delete manufacturer not found to /manufacturers/5000
+    def test_404_manufacturer_to_delete_not_exists(self):
+        res = self.client().delete('/manufacturers/5000')
+        data = json.loads(res.data)
+
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'resource was not found')
+
+    
+        
 
 if __name__ == '__main__':
     unittest.main()
