@@ -7,9 +7,9 @@ from app import create_app
 from models import Pedal, Manufacturer, setup_db
 
 class TestPedalsAPI(unittest.TestCase):
-    self.site_owner_token = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ild3NW9Ya3ZhNHhEUmh3dGlwczlkMyJ9.eyJpc3MiOiJodHRwczovL2Rldi15azJtZ3RtYS51cy5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8NjAxMDZiODlkZjdiNWEwMDcxOGRkN2FkIiwiYXVkIjoicGVkYWxzZGJhcGkiLCJpYXQiOjE2MTE2ODk1ODcsImV4cCI6MTYxMTc3NTk4NywiYXpwIjoidVdodFpqRDNVV0NITTlCZmN0RDN0WWNBaEFVbmhXc20iLCJzY29wZSI6IiIsInBlcm1pc3Npb25zIjpbImRlbGV0ZTptYW51ZmFjdHVyZXJzIiwiZGVsZXRlOnBlZGFscyIsInBhdGNoOm1hbnVmYWN0dXJlcnMiLCJwYXRjaDpwZWRhbHMiLCJwb3N0Om1hbnVmYWN0dXJlcnMiLCJwb3N0OnBlZGFscyJdfQ.iJfk_iy4F703ghmSFcD9dUAzFJ5Gt-eJFkbJ-o65s-l34RZTgcCqM_c6BjL1wWlH0YQlS-GycJwf80d1Gt3fdCYskTQxuHZdEwzv_EOS33DizEtbgju3DlkxSPyIqejXb9DuqwNFagnRRx5xYw6erAG6MugtFitzGPRv_SC_dVMaJF8N4k90s9tAS5o2HflR1yrRGUWQA7Riq9_WQYTI-LVZ6MJRRaktJivZ7IJIKwPxOB5iwPrxtb-BccixSvvQgbcLxIl_7RIRWB2tNjBrMI7cNRFHpv1L26QPPIYCkMwR-r2goV_HiiEuyIEv83qwACEa3QlYXRTTpNwYuVUtvA'
+    site_owner_token = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ild3NW9Ya3ZhNHhEUmh3dGlwczlkMyJ9.eyJpc3MiOiJodHRwczovL2Rldi15azJtZ3RtYS51cy5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8NjAxMDZiODlkZjdiNWEwMDcxOGRkN2FkIiwiYXVkIjoicGVkYWxzZGJhcGkiLCJpYXQiOjE2MTE2ODk1ODcsImV4cCI6MTYxMTc3NTk4NywiYXpwIjoidVdodFpqRDNVV0NITTlCZmN0RDN0WWNBaEFVbmhXc20iLCJzY29wZSI6IiIsInBlcm1pc3Npb25zIjpbImRlbGV0ZTptYW51ZmFjdHVyZXJzIiwiZGVsZXRlOnBlZGFscyIsInBhdGNoOm1hbnVmYWN0dXJlcnMiLCJwYXRjaDpwZWRhbHMiLCJwb3N0Om1hbnVmYWN0dXJlcnMiLCJwb3N0OnBlZGFscyJdfQ.iJfk_iy4F703ghmSFcD9dUAzFJ5Gt-eJFkbJ-o65s-l34RZTgcCqM_c6BjL1wWlH0YQlS-GycJwf80d1Gt3fdCYskTQxuHZdEwzv_EOS33DizEtbgju3DlkxSPyIqejXb9DuqwNFagnRRx5xYw6erAG6MugtFitzGPRv_SC_dVMaJF8N4k90s9tAS5o2HflR1yrRGUWQA7Riq9_WQYTI-LVZ6MJRRaktJivZ7IJIKwPxOB5iwPrxtb-BccixSvvQgbcLxIl_7RIRWB2tNjBrMI7cNRFHpv1L26QPPIYCkMwR-r2goV_HiiEuyIEv83qwACEa3QlYXRTTpNwYuVUtvA'
 
-    self.contributor_token = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ild3NW9Ya3ZhNHhEUmh3dGlwczlkMyJ9.eyJpc3MiOiJodHRwczovL2Rldi15azJtZ3RtYS51cy5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8NjAxMDZiZmQ2OGJmMTgwMDY5ZWQ1ZDkyIiwiYXVkIjoicGVkYWxzZGJhcGkiLCJpYXQiOjE2MTE2ODkxMTEsImV4cCI6MTYxMTc3NTUxMSwiYXpwIjoidVdodFpqRDNVV0NITTlCZmN0RDN0WWNBaEFVbmhXc20iLCJzY29wZSI6IiIsInBlcm1pc3Npb25zIjpbInBvc3Q6bWFudWZhY3R1cmVycyIsInBvc3Q6cGVkYWxzIl19.g7Zqz2bCSAQ0uTsjw1MvLTdaUJc7DfhkNfDRamZz62Kij3uWhphjh90TtZhFC-EYVbWZM5FdpDzb3DzRfloko1SFL7ywmviayv9YhzzxgqQIRsbzywwPrHBFe9UBnesClZDMtFrsp6X4PnSLl_KGzfUOM8hISPufKai9pJameRV5SOaLeY6LrLaVXKot74Xw7bIeRQrO8HrrSck_USvcJJzDzmNyjrZnjVP6yc7PUtzgcEVR4znWRC0qaWBm_MTnxVnls3LV8eA5ukYhu7yDcy_sgiOhPnA6_A7vVHOKY8RwuOgsQb5uBtSlwVp1qMbafy0Pg35uEC5w5alGsBU4sA'
+    contributor_token = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ild3NW9Ya3ZhNHhEUmh3dGlwczlkMyJ9.eyJpc3MiOiJodHRwczovL2Rldi15azJtZ3RtYS51cy5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8NjAxMDZiZmQ2OGJmMTgwMDY5ZWQ1ZDkyIiwiYXVkIjoicGVkYWxzZGJhcGkiLCJpYXQiOjE2MTE2ODkxMTEsImV4cCI6MTYxMTc3NTUxMSwiYXpwIjoidVdodFpqRDNVV0NITTlCZmN0RDN0WWNBaEFVbmhXc20iLCJzY29wZSI6IiIsInBlcm1pc3Npb25zIjpbInBvc3Q6bWFudWZhY3R1cmVycyIsInBvc3Q6cGVkYWxzIl19.g7Zqz2bCSAQ0uTsjw1MvLTdaUJc7DfhkNfDRamZz62Kij3uWhphjh90TtZhFC-EYVbWZM5FdpDzb3DzRfloko1SFL7ywmviayv9YhzzxgqQIRsbzywwPrHBFe9UBnesClZDMtFrsp6X4PnSLl_KGzfUOM8hISPufKai9pJameRV5SOaLeY6LrLaVXKot74Xw7bIeRQrO8HrrSck_USvcJJzDzmNyjrZnjVP6yc7PUtzgcEVR4znWRC0qaWBm_MTnxVnls3LV8eA5ukYhu7yDcy_sgiOhPnA6_A7vVHOKY8RwuOgsQb5uBtSlwVp1qMbafy0Pg35uEC5w5alGsBU4sA'
 
     def setUp(self):
         '''Run before tests'''
@@ -238,22 +238,83 @@ class TestPedalsAPI(unittest.TestCase):
     #Test post manufacturer with RBAC success to /manufacturers
     #with Contributor credentials
     def test_permissions_contributor(self):
-        pass
+        res = self.client().post('/manufacturers', 
+            headers = {
+                "Authorization": "Bearer {}".format(self.contributor_token)
+            },
+            json = {
+                'name': 'Real Sounds',
+                'website_link': 'https://www.realsounds.com'
+            })
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertTrue(data['created_manufacturer'])
+        self.assertTrue(len(data['manufacturers']))
+        self.assertTrue(data['num_manufacturers'])
+        self.assertEqual(data['success'], True)
 
     #Test post manufacturer with RBAS success to /manufacturers
     #with Site Owner credentials
     def test_permissions_site_owner(self):
-        pass
+        res = self.client().post('/manufacturers', 
+            headers = {
+                "Authorization": "Bearer {}".format(self.site_owner_token)
+            },
+            json = {
+                'name': 'Extreme Pedals',
+                'website_link': 'https://www.extremepedals.com'
+            })
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertTrue(data['created_manufacturer'])
+        self.assertTrue(len(data['manufacturers']))
+        self.assertTrue(data['num_manufacturers'])
+        self.assertEqual(data['success'], True)
 
     #Test update pedal with RBAC denied to /pedals/365
     #with Contributor credentials
     def test_permissions_denied_contributor(self):
-        pass
+        res = self.client().patch('/pedals/365',
+            headers = {
+                "Authorization": "Bearer {}".format(self.contributor_token)
+            },
+            json = {
+                'name': 'Tailfin',
+                'pedal_type': 'Vibrato',
+                'new_price': '$89.00',
+                'used_price': '$55.00',
+                'manufacturer_id': 28
+            })
+        data = json.loads(res.data)
+        
+        self.assertEqual(res.status_code, 401)
+        self.assertTrue(data, 'Permission not in permissions list')
+
 
     #Test update pedal with RBAC success to /pedals/283
     #with Site Owner credentials
     def test_permissions_site_owner_update(self):
-        pass
+        res = self.client().patch('/pedals/283',
+            headers = {
+                "Authorization": "Bearer {}".format(self.site_owner_token)
+            },
+            json = {
+                'name': 'Twister',
+                'pedal_type': 'Rotary Speaker',
+                'new_price': '$59.00',
+                'used_price': '$39.00',
+                'manufacturer_id': 17
+            })
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['updated_pedal'], 283)
+        self.assertTrue(len(data['pedals']))
+        self.assertTrue(data['num_pedals'])
+        self.assertEqual(data['success'], True)
+        
 
 
 if __name__ == '__main__':
