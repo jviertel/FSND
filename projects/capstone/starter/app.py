@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from flask_migrate import Migrate
 from models import Pedal, Manufacturer, setup_db
+from auth import AuthError, requires_auth
 
 #Configure app
 def create_app(test_config=None):
