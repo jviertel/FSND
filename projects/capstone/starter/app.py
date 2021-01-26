@@ -297,6 +297,12 @@ def create_app(test_config=None):
       'message': 'internal server error'
     }), 500
   
+  @app.errorhandler(AuthError)
+  def authentication_error(error):
+      return jsonify(error.error), error.status_code
+      # Cite: 1/11/2021 https://knowledge.udacity.com/questions/204223
+
+  
   return app
 
 app = create_app()
